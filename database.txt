@@ -1,0 +1,77 @@
+
+-- Database Schema for ART HR Manager
+-- Copy this content and run it in your MySQL Database (phpMyAdmin > SQL Tab)
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+07:00"; -- Adjusted to WIB example, or use "+00:00"
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `employees`
+--
+
+CREATE TABLE IF NOT EXISTS `employees` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `position` varchar(100) NOT NULL,
+  `join_date` date NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `leave_balances`
+--
+
+CREATE TABLE IF NOT EXISTS `leave_balances` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `employee_id` int(11) NOT NULL,
+  `amount` int(11) NOT NULL DEFAULT 12,
+  `start_date` date NOT NULL,
+  `end_date` date NOT NULL,
+  `year` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_lb_employee` (`employee_id`),
+  CONSTRAINT `fk_balance_employee` FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `leave_usage`
+--
+
+CREATE TABLE IF NOT EXISTS `leave_usage` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `employee_id` int(11) NOT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date NOT NULL,
+  `total_days` int(11) NOT NULL,
+  `note` text DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_lu_employee` (`employee_id`),
+  CONSTRAINT `fk_usage_employee` FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `terminations`
+--
+
+CREATE TABLE IF NOT EXISTS `terminations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `employee_id` int(11) NOT NULL,
+  `termination_date` date NOT NULL,
+  `reason` text NOT NULL,
+  `years_worked` float NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_term_employee` (`employee_id`),
+  CONSTRAINT `fk_termination_employee` FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+COMMIT;
